@@ -9,3 +9,28 @@
  @tailwind base;
  @tailwind components;
  @tailwind utilities;
+
+ .arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+ }
+
+ .roster-card {
+    z-index: 0;
+    transition: all .32s ease;
+    filter: blur(3px);
+ }
+
+ .active-date {
+    transform: scale(130%);
+    z-index: 1;
+    filter: none;
+ }
+
+ @layer components {
+    .arrow-btn {
+        @apply grid place-items-center rounded-full bg-slate-400 text-white shadow-lg w-12 h-12;
+    }
+}

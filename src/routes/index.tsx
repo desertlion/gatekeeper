@@ -53,6 +53,12 @@ export default component$(() => {
   const display_end_date = new Date(new Date().setDate(new Date().getDate() + 2));
   // console.log(display_start_date, display_end_date)
 
+  const data = useStore({
+    active_date: parseInt(new Date().getDate().toString()),
+    display_start_date: display_start_date.getDate(),
+    display_end_date: display_end_date.getDate(),
+  });
+
   const activelist = useStore(getDatesInRange(display_start_date, display_end_date, displayDates));
   // console.log(activelist);
 
@@ -60,8 +66,9 @@ export default component$(() => {
     const content = [];
 
     for(const item in activelist) {
+      const is_todays_date = data.active_date == activelist[item].day ? 'active-date' : '';
       content.push(
-        <div key={item} className="w-[150px] h-[300px] bg-white rounded-md shadow flex-none p-5 mr-5 flex flex-col">
+        <div key={item} className={`roster-card ${is_todays_date} w-[150px] h-[300px] bg-white rounded-md shadow-lg flex-none p-5 mr-5 flex flex-col`}>
           <h2 className="font-italic">{activelist[item].dayName}</h2>
           <h3 className="font-bold italic text-slate-700">{activelist[item].day} {activelist[item].monthName}</h3> 
           <hr className="my-5" />
@@ -75,13 +82,26 @@ export default component$(() => {
     return content;
   }
 
+  const layerX = {};
+  const posMap = [120, -50, -200, -400, -550];
+  let idx = 0;
+  for(const i in activelist) {
+    layerX[activelist[i].day] = posMap[idx];
+    idx++;
+  }
+  console.log(layerX);
+
   return (
     <div className="text-slate-400 w-[600px] max-w-[600px] text-center">
       <h1 className="font-bold uppercase">JADWAL KUNCI GERBANG</h1>
       <h2 className="font-bold text-4xl uppercase text-slate-800">CLUSTER ASTER II</h2>
       <hr className="my-5" />
-      <div className="overflow-hidden w-[400px] mx-auto p-5">
-        <div className="flex overflow-hidden p-5">{displayActiveList()}</div>
+      <div className="overflow w-[500px] mx-auto p-5 relative mt-[50px]">
+        <button className="arrow-btn left-[0px]" onClick$={() => {
+          if(data.active_date > data.display_start_date) data.active_date--;
+         }}>🡠</button>
+        <div className="flex overflow p-5" style={{ transform: `translateX(${layerX[data.active_date]}px)`, transition: 'all .32s ease' }}>{displayActiveList()}</div>
+        <button className="arrow-btn right-[0px]" onClick$={() => data.active_date < data.display_end_date ? data.active_date++ : false }>🡢</button>
       </div>
       
     </div>
